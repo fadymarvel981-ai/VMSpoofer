@@ -1,24 +1,31 @@
-name: Build VMSpoofer
+name: Professional VMSpoofer Build
 
 on:
-  workflow_dispatch: # بيسمح لك تشغل الـ Build يدوياً
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive # ده مهم عشان لو فيه كود خارجي
 
-    - name: Add MSBuild to PATH
+    - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Build Project
+    - name: Build Solution
       run: |
-        msbuild VMSpoofer.sln /p:Configuration=Release /p:Platform=x64
+        # البحث عن ملف الـ .sln وبناؤه تلقائياً
+        $slnPath = Get-ChildItem -Recurse -Filter *.sln | Select-Object -First 1
+        msbuild $slnPath.FullName /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143
 
-    - name: Upload Artifact
+    - name: Upload VMSpoofer
       uses: actions/upload-artifact@v4
       with:
-        name: VMSpoofer-Executable
-        path: x64/Release/*.exe
+        name: VMSpoofer-Package
+        path: |
+          **/Release/*.exe
+          **/Release/*.dll
