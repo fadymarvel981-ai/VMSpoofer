@@ -1,4 +1,4 @@
-name: Professional VMSpoofer Build
+name: Build VMSpoofer with ImGui
 
 on:
   workflow_dispatch:
@@ -11,21 +11,16 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        submodules: recursive # ده مهم عشان لو فيه كود خارجي
+        submodules: recursive # السطر ده هو اللي هيحل مشكلة imgui
 
-    - name: Setup MSBuild
+    - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Build Solution
-      run: |
-        # البحث عن ملف الـ .sln وبناؤه تلقائياً
-        $slnPath = Get-ChildItem -Recurse -Filter *.sln | Select-Object -First 1
-        msbuild $slnPath.FullName /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143
+    - name: Build Project
+      run: msbuild VMSpoofer.sln /p:Configuration=Release /p:Platform=x64
 
-    - name: Upload VMSpoofer
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: VMSpoofer-Package
-        path: |
-          **/Release/*.exe
-          **/Release/*.dll
+        name: VMSpoofer-GUI
+        path: x64/Release/*.exe
