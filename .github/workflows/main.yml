@@ -11,7 +11,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        submodules: recursive # السطر ده هو اللي هيحل مشكلة imgui
+        submodules: recursive 
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
